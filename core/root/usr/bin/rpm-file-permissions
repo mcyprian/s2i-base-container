@@ -19,3 +19,14 @@ do
             ;;
     esac
 done
+
+scl_pkgs=$(yum list installed | grep sclo-rh | cut -d ' ' -f 1 | uniq)
+for pkg in $scl_pkgs; do
+    rpm -q --qf "$rpm_format" $pkg | while read line
+    do
+        eval "set -- $line"
+        if [[ "$1" == "normal" && -f $3 ]]; then
+            chmod "${2: -4}" "$3"
+        fi
+    done
+done
