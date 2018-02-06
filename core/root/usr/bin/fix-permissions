@@ -16,8 +16,12 @@ if ! [ -e "$1" ] ; then
   exit 0
 fi
 
-find -L "$1" ${CHECK_OWNER} \! -gid 0 -exec chgrp 0 {} +
-find -L "$1" ${CHECK_OWNER} \! -perm -g+rw -exec chmod g+rw {} +
+find -L "$1" ${CHECK_OWNER} \! -gid 0 \
+                               -not -path "*/[lib|include]*/python*" \
+                               -exec chgrp 0 {} +
+find -L "$1" ${CHECK_OWNER} \! -perm -g+rw \
+                               -not -path "*/[lib|include]*/python*" \
+                               -exec chmod g+rw {} +
 find -L "$1" ${CHECK_OWNER} -perm /u+x -a \! -perm /g+x -exec chmod g+x {} +
 find -L "$1" ${CHECK_OWNER} -type d \! -perm /g+x -exec chmod g+x {} +
 
